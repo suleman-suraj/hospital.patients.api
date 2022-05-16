@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 require("dotenv").config();
 const connectDB = require("./config/connectDB");
-const mongoose = require("mongoose");
+const cors = require("cors");
 
 const usersRoute = require("./routes/usersRoute");
 const patientsRoute = require("./routes/patientsRoute");
@@ -13,7 +13,7 @@ connectDB();
 //middlewares
 app.use(express.json());
 app.use(morgan("dev"));
-
+app.use(cors());
 app.use(usersRoute);
 app.use(patientsRoute);
 
