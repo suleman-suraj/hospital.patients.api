@@ -5,33 +5,46 @@ const { generateToken } = require("../utils/generateToken");
 
 //create a new user
 exports.register = async (req, res) => {
-  const { firstname, lastname, dob, email, contact, password, profession } = req.body;
-  const valid = await validate({ firstname, lastname, dob, email, contact, password, profession });
+  const { firstname, lastname, dob, email, contact, password, profession } =
+    req.body;
+  const valid = await validate({
+    firstname,
+    lastname,
+    dob,
+    email,
+    contact,
+    password,
+    profession,
+  });
 
-  if (valid) {
-    const hashedpassword = await bcrypt.hash(valid.password, 10);
-    const user = await User.create({
-      firstname,
-      lastname,
-      dob,
-      email,
-      contact,
-      password: hashedpassword,
-      profession,
-    });
+  try {
+    if (valid) {
+      const hashedpassword = await bcrypt.hash(valid.password, 10);
+      const user = await User.create({
+        firstname,
+        lastname,
+        dob,
+        email,
+        contact,
+        password: hashedpassword,
+        profession,
+      });
 
-    if (user) {
-      res.status(201).json({
-        name: user.name,
-        email: user.email,
-        id: user._id,
-        token: generateToken(user._id),
+      if (user) {
+        res.status(201).json({
+          name: user.name,
+          email: user.email,
+          id: user._id,
+          token: generateToken(user._id),
+        });
+      }
+    } else {
+      res.status(400).json({
+        message: "Invalid data",
       });
     }
-  } else {
-    res.status(400).json({
-      message: "Invalid data",
-    });
+  } catch (e) {
+    res.status(400).json({ e });
   }
 };
 
