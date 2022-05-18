@@ -5,14 +5,17 @@ const { generateToken } = require("../utils/generateToken");
 
 //create a new user
 exports.register = async (req, res) => {
-  const { username, email, password, profession } = req.body;
-  const valid = await validate({ username, email, password, profession });
+  const { firstname, lastname, dob, email, contact, password, profession } = req.body;
+  const valid = await validate({ firstname, lastname, dob, email, contact, password, profession });
 
   if (valid) {
     const hashedpassword = await bcrypt.hash(valid.password, 10);
     const user = await User.create({
-      username,
+      firstname,
+      lastname,
+      dob,
       email,
+      contact,
       password: hashedpassword,
       profession,
     });
@@ -41,7 +44,7 @@ exports.loginUser = async (req, res) => {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
         res.status(200).json({
-          username: user.username,
+          email: user.email,
           password: user.password,
           id: user._id,
           token: generateToken(user._id),
